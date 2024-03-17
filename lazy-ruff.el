@@ -1,4 +1,4 @@
-;;; lazy-ruff.el --- Integration with the Ruff Python linter/formatter
+;;; lazy-ruff.el --- Integration with the Ruff Python linter/formatter -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Christopher Buch Madsen
 
