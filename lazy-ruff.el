@@ -4,7 +4,7 @@
 
 ;; Author: Christopher Buch Madsen
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "24.3") (org "9.1"))
 ;; Keywords: languages, tools
 ;; URL: http://github.com/yourusername/emacs-lazy-ruff
 
@@ -38,6 +38,10 @@
 ;;   https://docs.astral.sh/ruff/installation/
 
 ;;; Code:
+
+
+(require 'org-element)
+(require 'org)
 
 ;; The global variables defined before ruff-lint-format-block can be changed with setq for customization.
 (defvar lazy-ruff-check-command
