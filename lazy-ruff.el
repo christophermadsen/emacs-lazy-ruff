@@ -8,31 +8,34 @@
 ;; Keywords: languages, tools
 ;; URL: http://github.com/yourusername/emacs-lazy-ruff
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This program is free software; you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the Free
+;; Software Foundation, either version 3 of the License, or (at your option)
+;; any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful, but WITHOUT
+;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+;; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+;; more details.
 
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; You should have received a copy of the GNU General Public License along with
+;; this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
 
-;; This package provides Emacs commands to format and lint Python code using the external 'ruff' tool.
-;; It offers functions to format the entire buffer, specific regions, or Org mode source blocks.
+;; This package provides Emacs commands to format and lint Python code using
+;; the external 'ruff' tool.  It offers functions to format the entire buffer,
+;; specific regions, or Org mode source blocks.
 ;; 
 ;; Prerequisites:
-;; - The 'ruff' command-line tool must be installed and available in your system's PATH.
+;; - The 'ruff' command-line tool must be installed and available in your
+;;   system's PATH.
 ;;
 ;; Installation of 'ruff':
-;; - Please refer to the 'ruff' documentation at https://docs.astral.sh/ruff/installation/
+;; - Please refer to the 'ruff' documentation at:
+;;   https://docs.astral.sh/ruff/installation/
 
 ;;; Code:
 
