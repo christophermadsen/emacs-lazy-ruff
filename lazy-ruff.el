@@ -4,7 +4,7 @@
 
 ;; Author: Christopher Buch Madsen
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24.3"))
 ;; Keywords: languages, tools
 ;; URL: http://github.com/yourusername/emacs-lazy-ruff
 
@@ -37,24 +37,24 @@
 ;;; Code:
 
 ;; The global variables defined before ruff-lint-format-block can be changed with setq for customization.
-(defvar ruff-check-command
+(defvar lazy-ruff-check-command
   (concat "ruff check --fix --unsafe-fixes -s " ;; Base setting, I'm including unsafe fixes because I am a mad man.
           "--preview " ;; Enable preview rules, because many of them are really useful.
           "--line-length=79 "  ;; Adjust the max line length to comply with PEP 8.
           "--select ALL "  ;; Start with enabling all checks because I am a MAD MAN.
           "--ignore E266,E402,E731,F403,F405,D100,D104,D401,T203,T201"))  ;; Ignore rules for PEP 8 compliance and avoid unnecessary linting.
 
-(defvar ruff-only-format-block nil
+(defvar lazy-ruff-only-format-block nil
   "When non-nil (e.g. t), only format the code in a block without linting fixes.")
 
-(defvar ruff-only-format-buffer nil
+(defvar lazy-ruff-only-format-buffer nil
   "When non-nil (e.g. t), only format the code in a buffer without linting fixes.")
 
-(defvar ruff-only-format-region nil
+(defvar lazy-ruff-only-format-region nil
   "When non-nil (e.g. t), only format the code in a region without linting fixes.")
 
 ;;;###autoload
-(defun ruff-lint-format-block ()
+(defun lazy-ruff-lint-format-block ()
   "Format Python `org-babel` blocks in Org mode using `ruff`.
 Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
 
@@ -79,10 +79,10 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
       (if (not (string= lang "python"))
           (message "The source block is not Python")
         (with-temp-file temp-file (insert code))
-        (if ruff-only-format-block
+        (if lazy-ruff-only-format-block
             (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))
           (progn
-            (shell-command-to-string (format "%s %s" ruff-check-command temp-file))
+            (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
             (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))))
         (setq formatted-code (with-temp-buffer
                                (insert-file-contents temp-file)
@@ -96,17 +96,17 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (move-to-column initial-column)))
 
 ;;;###autoload
-(defun ruff-lint-format-buffer ()
+(defun lazy-ruff-lint-format-buffer ()
   "Format the current Python buffer using `ruff` before saving."
   (interactive)
   (when (eq major-mode 'python-mode)
     (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
       ;; Write buffer to temporary file, format it, and replace buffer contents.
       (write-region nil nil temp-file)
-      (if ruff-only-format-buffer
+      (if lazy-ruff-only-format-buffer
           (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))
         (progn
-          (shell-command-to-string (format "%s %s" ruff-check-command temp-file))
+          (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
           (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))))
       (erase-buffer)
       (insert-file-contents temp-file)
@@ -114,7 +114,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
       (delete-file temp-file))))
 
 ;;;###autoload
-(defun ruff-lint-format-region ()
+(defun lazy-ruff-lint-format-region ()
   "Format the currently selected region using `ruff`.  Use at your own discretion."
   (interactive)
   (if (use-region-p)
@@ -124,10 +124,10 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
              (temp-buffer (generate-new-buffer " *temp-ruff-output*")))
         ;; Write selected region to temporary file, format it.
         (write-region start end temp-file nil 'silent)
-        (if ruff-only-format-region
+        (if lazy-ruff-only-format-region
             (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))
           (progn
-            (shell-command-to-string (format "%s %s" ruff-check-command temp-file))
+            (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
             (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))))
 
         ;; Replace region with formatted content.
@@ -142,24 +142,24 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (message "No region selected.")))
 
 ;;;###autoload
-(defun ruff-format-dispatch ()
+(defun lazy-ruff-format-dwim ()
   "Dispatch to the correct ruff format function based on the context."
   (interactive)
   ;; First, check if a region is selected
   (if (use-region-p)
-      (ruff-lint-format-region)
+      (lazy-ruff-lint-format-region)
     ;; Next, check if inside an org-babel code block
     (if (org-in-src-block-p)
-        (ruff-lint-format-block)
+        (lazy-ruff-lint-format-block)
       ;; Lastly, check if the current buffer is a Python mode buffer
       (if (eq major-mode 'python-mode)
-          (ruff-lint-format-buffer)
+          (lazy-ruff-lint-format-buffer)
         (message "Not in a Python buffer or org-babel block, and no region is selected.")))))
 
-(defun setup-ruff-save-hook ()
+(defun lazy-ruff-setup-save-hook ()
   "Set up `before-save-hook` to format Python buffers with `ruff`.
 Function calls the ruff-lint-format-buffer function."
-  (add-hook 'before-save-hook 'ruff-lint-format-buffer nil t))
+  (add-hook 'before-save-hook 'lazy-ruff-lint-format-buffer nil t))
 
 (provide 'lazy-ruff)
 ;;; lazy-ruff.el ends here
