@@ -53,6 +53,7 @@
 (defvar ruff-only-format-region nil
   "When non-nil (e.g. t), only format the code in a region without linting fixes.")
 
+;;;###autoload
 (defun ruff-lint-format-block ()
   "Format Python `org-babel` blocks in Org mode using `ruff`.
 Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
@@ -94,6 +95,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (forward-line (1- initial-line))
     (move-to-column initial-column)))
 
+;;;###autoload
 (defun ruff-lint-format-buffer ()
   "Format the current Python buffer using `ruff` before saving."
   (interactive)
@@ -111,6 +113,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
       ;; Clean up temporary file.
       (delete-file temp-file))))
 
+;;;###autoload
 (defun ruff-lint-format-region ()
   "Format the currently selected region using `ruff`.  Use at your own discretion."
   (interactive)
@@ -138,6 +141,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
         (kill-buffer temp-buffer))
     (message "No region selected.")))
 
+;;;###autoload
 (defun ruff-format-dispatch ()
   "Dispatch to the correct ruff format function based on the context."
   (interactive)
