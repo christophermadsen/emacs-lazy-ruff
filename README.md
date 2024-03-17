@@ -5,6 +5,10 @@ commands. **Lazy-ruff** offers an (hopefully) easy approach to formatting and
 linting your Python code with Ruff, whether it's within org-babel code blocks,
 selected regions or on entire Python major mode buffers.
 
+From my experience **lazy-ruff** operates MUCH faster than any other formatter
+or linter that I've used (thanks to **Ruff** of course), but that is a purely
+subjective experience as I have not run any benchmarks what-so-ever.
+
 ### Notice
 I barely know any (emacs-)lisp, so if you enjoy the package then any
 constructive criticism and contribution on further development would be very
@@ -22,6 +26,7 @@ You can download the `lazy-ruff.el` elisp file, put it in a place in your
 `init.el` or a personalization file of your choice.
 
 ``` emacs-lisp
+(add-to-list 'load-path "/path/to/lazy-ruff-directory")
 (require 'lazy-ruff)
 ```
 
@@ -37,9 +42,8 @@ I recommend directly adding the save hook and handy keybinding during the use-pa
 
 ``` emacs-lisp
 (use-package lazy-ruff
-    :init
-    (global-set-key (kbd "C-c f") 'ruff-format-dispatch)    ;; Bind the dispatch function to "C-c f" in the global map
-    (add-hook 'python-mode-hook 'setup-ruff-save-hook))     ;; Apply the setup-ruff-save-hook function to python-mode buffers.
+  :bind (("C-c f" . ruff-format-dispatch))
+  :hook (python-mode . setup-ruff-save-hook))
 ```
 
 # Usage
