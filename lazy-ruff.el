@@ -3,7 +3,7 @@
 ;; Copyright (C) 2024  Christopher Buch Madsen
 
 ;; Author: Christopher Buch Madsen
-;; Version: 0.1
+;; Version: 0.2
 ;; Package-Requires: ((emacs "24.3") (org "9.1"))
 ;; Keywords: languages, tools
 ;; URL: http://github.com/yourusername/emacs-lazy-ruff
@@ -43,13 +43,19 @@
 (require 'org-element)
 (require 'org)
 
-;; The global variables defined before ruff-lint-format-block can be changed with setq for customization.
+(defvar python-mode-hook) ;; Quiet the byte-compiler warning
+
+;; The global variables defined in this part before the ruff-lint-format-block
+;; function can be freely changed with setq in your init.el (or other
+;; personalization .el) for customization of lazy-ruff.
 (defvar lazy-ruff-check-command
-  (concat "ruff check --fix --unsafe-fixes -s " ;; Base setting, I'm including unsafe fixes because I am a mad man.
-          "--preview " ;; Enable preview rules, because many of them are really useful.
-          "--line-length=79 "  ;; Adjust the max line length to comply with PEP 8.
-          "--select ALL "  ;; Start with enabling all checks because I am a MAD MAN.
-          "--ignore E266,E402,E731,F403,F405,D100,D104,D401,T203,T201"))  ;; Ignore rules for PEP 8 compliance and avoid unnecessary linting.
+  (concat "ruff check --fix -s "
+          "--select ALL "
+          "--ignore E266,E402,E731,F403,F405,D100,D104,D401,T203,T201") ;; Ignore rules for PEP 8 compliance.
+  "Defines the ruff check call for all methods.")
+
+(defvar lazy-ruff-format-command "ruff format -s"
+  "Defines the ruff format call for all methods.")
 
 (defvar lazy-ruff-only-format-block nil
   "When non-nil (e.g. t), only format the code in a block without linting fixes.")
@@ -87,10 +93,9 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
           (message "The source block is not Python")
         (with-temp-file temp-file (insert code))
         (if lazy-ruff-only-format-block
-            (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))
-          (progn
-            (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-            (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))))
+            (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
+          (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
+          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
         (setq formatted-code (with-temp-buffer
                                (insert-file-contents temp-file)
                                (buffer-string)))
@@ -111,10 +116,9 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
       ;; Write buffer to temporary file, format it, and replace buffer contents.
       (write-region nil nil temp-file)
       (if lazy-ruff-only-format-buffer
-          (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))
-        (progn
-          (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-          (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))))
+          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
+        (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
+        (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
       (erase-buffer)
       (insert-file-contents temp-file)
       ;; Clean up temporary file.
@@ -132,11 +136,9 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
         ;; Write selected region to temporary file, format it.
         (write-region start end temp-file nil 'silent)
         (if lazy-ruff-only-format-region
-            (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))
-          (progn
-            (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-            (shell-command-to-string (format "ruff format --line-length=79 -s %s" temp-file))))
-
+            (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
+          (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
+          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
         ;; Replace region with formatted content.
         (with-current-buffer temp-buffer
           (insert-file-contents temp-file))
@@ -149,7 +151,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (message "No region selected.")))
 
 ;;;###autoload
-(defun lazy-ruff-format-dwim ()
+(defun lazy-ruff-lint-format-dwim ()
   "Dispatch to the correct ruff format function based on the context."
   (interactive)
   ;; First, check if a region is selected
@@ -163,10 +165,33 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
           (lazy-ruff-lint-format-buffer)
         (message "Not in a Python buffer or org-babel block, and no region is selected.")))))
 
-(defun lazy-ruff-setup-save-hook ()
-  "Set up `before-save-hook` to format Python buffers with `ruff`.
-Function calls the ruff-lint-format-buffer function."
-  (add-hook 'before-save-hook 'lazy-ruff-lint-format-buffer nil t))
+;;;###autoload
+(define-minor-mode lazy-ruff-mode
+  "Toggle automatic formatting with Ruff in a Python buffer."
+  :lighter " Lazy-Ruff"
+  :global nil
+  (if lazy-ruff-mode
+      (add-hook 'before-save-hook #'lazy-ruff-lint-format-buffer nil t)
+    (remove-hook 'before-save-hook #'lazy-ruff-lint-format-buffer t)))
+
+;;;###autoload
+(defun lazy-ruff-mode-global-toggle (&optional enable)
+  "Toggle or explicitly set `lazy-ruff-mode` globally for Python buffers.
+With no argument, toggles the mode.  With a non-nil argument ENABLE, turns the
+mode on, and with nil, turns it off."
+  (interactive "P")
+  (let ((target-state (if (called-interactively-p 'any)
+                          (not (memq 'lazy-ruff-mode python-mode-hook))
+                        enable)))
+    ;; Ensure hooks and mode are aligned with target state
+    (if target-state
+        (add-hook 'python-mode-hook #'lazy-ruff-mode)
+      (remove-hook 'python-mode-hook #'lazy-ruff-mode))
+    ;; Apply the mode state to all current Python buffers
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (eq major-mode 'python-mode)
+          (lazy-ruff-mode (if target-state 1 -1)))))))
 
 (provide 'lazy-ruff)
 ;;; lazy-ruff.el ends here
