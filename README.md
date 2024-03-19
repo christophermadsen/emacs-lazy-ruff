@@ -87,10 +87,13 @@ call:
 ```
 
 ### Manual Install
+Simply install lazy-ruff with `M-x package-install RET lazy-ruff RET`
+
+or
+
 You can download the `lazy-ruff.el` elisp file, put it in a place in your
 `.emacs.d` directory and load the package by adding the following to your
 `init.el` or a personalization file of your choice.
-
 ``` emacs-lisp
 (add-to-list 'load-path "/path/to/lazy-ruff-directory") ;; Only needed if the directory for lazy-ruff.el isn't yet on the load-path
 (require 'lazy-ruff)
