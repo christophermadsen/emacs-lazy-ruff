@@ -110,6 +110,14 @@ the best fitting `lazy-ruff` method. Here is an example:
 (global-set-key (kbd "C-c f") 'lazy-ruff-lint-format-dwim)
 ```
 
+Or during the `use-package` call:
+``` emacs-lisp
+(use-package lazy-ruff
+  :ensure t
+  :bind (("C-c f" . lazy-ruff-lint-format-dwim)))
+```
+
+
 You can also set up keybindings for each individual method depending on your
 use-case, but if you use the `lazy-ruff-lint-format-dwim` method then
 `lazy-ruff` will automatically know which method to call depending on the
@@ -158,8 +166,8 @@ you can select (and ignore) have a look at [the Ruff
 tutorial](https://docs.astral.sh/ruff/tutorial/) and available linting
 [rules](https://docs.astral.sh/ruff/rules/).
 
-Here is an example of how you can change the call to `ruff check` (the linter,
-specifically) using a much more [radical
+Here is an example of how you could change the call to `ruff check` (the
+linter, specifically) using a much more [radical
 config](https://docs.astral.sh/ruff/configuration/#full-command-line-interface)
 including unsafe fixes, a max line length of 79 and preview rules enabled:
 
@@ -184,7 +192,7 @@ update the following variables:
 
 ``` emacs-lisp
 (setq lazy-ruff-only-format-block t) ;; Don't lint in code blocks
-(setq lazy-ruff-only-format-region t) ;; Don't lint in a marked region
+(setq lazy-ruff-only-format-region t) ;; Don't lint in marked regions
 (setq lazy-ruff-only-format-buffer t) ;; Don't lint in Python major mode buffers
 ```
 
@@ -193,9 +201,8 @@ We can also add these changes immediately when calling `use-package` with the
 
 ``` emacs-lisp
 (use-package lazy-ruff
-  :bind (("C-c f" . lazy-ruff-lint-format-dwim))
   :config
   (setq lazy-ruff-only-format-block t) ;; Don't lint in code blocks
-  (setq lazy-ruff-only-format-region t) ;; Don't lint in a marked region
+  (setq lazy-ruff-only-format-region t) ;; Don't lint in marked regions
   (setq lazy-ruff-only-format-buffer t)) ;; Don't lint in Python major mode buffers
 ```
