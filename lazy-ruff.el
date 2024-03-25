@@ -50,13 +50,7 @@
 
 (defvar python-mode-hook) ;; Quiet the byte-compiler warning
 
-;; The global variables defined in this part before the ruff-lint-format-block
-;; function can be freely changed with setq in your init.el (or other
-;; personalization .el) for customization of lazy-ruff.
-(defvar lazy-ruff-check-command
-  (concat "ruff check --fix -s "
-          "--select ALL "
-          "--ignore E266,E402,E731,F403,F405,D100,D104,D401,T203,T201") ;; Ignore rules for PEP 8 compliance.
+(defvar lazy-ruff-check-command "ruff check --fix -s"
   "Defines the ruff check call for all methods.")
 
 (defvar lazy-ruff-format-command "ruff format -s"
