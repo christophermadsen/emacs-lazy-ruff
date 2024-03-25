@@ -10,11 +10,14 @@
         - [Manual Install](#manual-install)
     - [Usage](#usage)
         - [Keybindings](#keybindings)
-        - [Format/Lint Automatically On Save](#formatlint-automatically-on-save)
+        - [Format/Lint Automatically on Save with the Minor Mode](#formatlint-automatically-on-save-with-the-minor-mode)
         - [Formatter and Linter Settings](#formatter-and-linter-settings)
+            - [Using ruff.toml or pyproject.toml](#using-rufftoml-or-pyprojecttoml)
+            - [A More Radical Example](#a-more-radical-example)
         - [I Only Want to Use the Ruff Formatter, Not the Linter](#i-only-want-to-use-the-ruff-formatter-not-the-linter)
 
 <!-- markdown-toc end -->
+
 # emacs-lazy-ruff
 
 `Lazy-ruff` is an Emacs integration of the blazingly fast [ruff
@@ -29,7 +32,7 @@ purely subjective experience, since I have not run any benchmarks what-so-ever.
 
 I hope this package will help your workflow.
 
-### A notice to potential users
+### A Notice to Potential Users
 I barely know any (emacs-)lisp, so if you enjoy the package, then any
 constructive criticism or contribution to further development would be very
 much appreciated :-)
@@ -87,7 +90,7 @@ call:
 ```
 
 ### Manual Install
-Simply install lazy-ruff with `M-x package-install RET lazy-ruff RET`
+Simply install `lazy-ruff` with `M-x package-install RET lazy-ruff RET`
 
 or
 
@@ -124,7 +127,7 @@ use-case, but if you use the `lazy-ruff-lint-format-dwim` method then
 context your cursor/pointer is in (an `org-babel` code block, a
 marked/highlighted region, a Python major mode buffer).
 
-### Format/Lint Automatically On Save
+### Format/Lint Automatically on Save with the Minor Mode
 `Lazy-ruff` provides a minor mode `lazy-ruff-mode` for automatically using the
 formatter/linter *on save* for Python buffers/files. To use this minor mode
 globally, add the following line to your Emacs config:
@@ -160,16 +163,25 @@ you can dynamically change these to fit your own use-case. The defaults are:
 
 Observe that the `lazy-ruff-check-command` defines the <ins>linter</ins> call
 to `ruff` on the CLI and the `lazy-ruff-format-command` defines the
-<ins>formatter</ins> call. The defaults used may seem crazy to you, but that is
-fine, you should modify them to something that suits you. For the rules that
-you can select (and ignore) have a look at [the Ruff
-tutorial](https://docs.astral.sh/ruff/tutorial/) and available linting
+<ins>formatter</ins> call. You should modify them to something that suits your
+project. For the rules that you can select (and ignore) have a look at [the
+Ruff tutorial](https://docs.astral.sh/ruff/tutorial/) and available linting
 [rules](https://docs.astral.sh/ruff/rules/).
 
+#### Using ruff.toml or pyproject.toml
+If you do not add rules directly to `lazy-ruff-check-command` and
+`lazy-ruff-format-command` then `ruff` will automatically look for a
+`pyproject.toml` or `ruff.toml` in the parent directories of your project,
+[have a look
+here](https://docs.astral.sh/ruff/configuration/#config-file-discovery) to read
+an explanation of how that works.
+
+#### A More Radical Example
 Here is an example of how you could change the call to `ruff check` (the
 linter, specifically) using a much more [radical
 config](https://docs.astral.sh/ruff/configuration/#full-command-line-interface)
-including unsafe fixes, a max line length of 79 and preview rules enabled:
+including unsafe fixes, a max line length of 79 and preview rules enabled. This
+will overrule whatever you have in your `ruff.toml` or `pyproject.toml` file:
 
 ``` emacs-lisp
 ;; More radical settings
@@ -180,9 +192,6 @@ including unsafe fixes, a max line length of 79 and preview rules enabled:
           "--select ALL "
           "--ignore E266,E402,E731,F403,F405,D100,D104,D401,T203,T201"))
 ```
-
-Furthermore, removing the `-s` flag and changing it to `-v` or `-q` should open
-a new buffer in your Emacs with the shell outputs of your `ruff` call.
 
 ### I Only Want to Use the Ruff Formatter, Not the Linter
 
