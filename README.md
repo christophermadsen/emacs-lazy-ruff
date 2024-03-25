@@ -134,10 +134,11 @@ you can dynamically change these to fit your own use-case. The defaults are:
 
 ``` emacs-lisp
 ;; Default settings
-(defvar lazy-ruff-check-command
-  (concat "ruff check --fix -s " ;; Make safe linter fixes and run silently
-          "--select ALL "  ;; Start with enabling all rules
-          "--ignore E266,E402,E731,F403,F405,D100,D104,D401,T203,T201"))  ;; Ignore rules for PEP 8 compliance
+(defvar lazy-ruff-check-command "ruff check --fix -s"
+  "Defines the ruff check call for all methods.")
+  
+(defvar lazy-ruff-format-command "ruff format -s"
+  "Defines the ruff format call for all methods.")
 
 (defvar lazy-ruff-only-format-block nil
   "When non-nil (e.g. t), only format the code in a block without linting fixes.")
