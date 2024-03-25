@@ -3,7 +3,7 @@
 ;; Copyright (C) 2024  Christopher Buch Madsen
 
 ;; Author: Christopher Buch Madsen
-;; Version: 0.2
+;; Version: 0.2.1
 ;; Package-Requires: ((emacs "24.3") (org "9.1"))
 ;; Keywords: languages, tools
 ;; URL: http://github.com/yourusername/emacs-lazy-ruff
