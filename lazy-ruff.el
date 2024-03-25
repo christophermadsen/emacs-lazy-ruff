@@ -69,10 +69,7 @@
 (defun lazy-ruff-lint-format-block ()
   "Format Python `org-babel` blocks in Org mode using `ruff`.
 Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
-
   (interactive)
-  (unless (org-in-src-block-p) (error "Not inside a source block"))
-
   (let ((initial-line (line-number-at-pos))
         (initial-column (current-column)))
     (let* ((element (org-element-context))
