@@ -97,7 +97,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
                                (buffer-string)))
         (delete-region (1+ content-start) content-end)
         (goto-char (1+ content-start))
-        (insert formatted-code "\n"))
+        (insert formatted-code))
       (delete-file temp-file))
     (goto-char (point-min))
     (forward-line (1- initial-line))
