@@ -6,7 +6,7 @@
 ;; Version: 0.2.1
 ;; Package-Requires: ((emacs "24.3") (org "9.1"))
 ;; Keywords: languages, tools
-;; URL: http://github.com/yourusername/emacs-lazy-ruff
+;; URL: http://github.com/christophermadsen/emacs-lazy-ruff
 
 ;; This program is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by the Free
