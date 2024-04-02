@@ -161,7 +161,8 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (lazy-ruff-lint-format-block))
    ;; Lastly, check if the current buffer is a Python mode buffer
    ((derived-mode-p 'python-mode 'python-base-mode)
-    (lazy-ruff-lint-format-buffer)
+    (lazy-ruff-lint-format-buffer))
+   (t
     (message "Not in a Python buffer or org-babel block, and no region is selected."))))
 
 ;;;###autoload
