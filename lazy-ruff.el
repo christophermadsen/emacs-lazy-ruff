@@ -171,23 +171,13 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (remove-hook 'before-save-hook #'lazy-ruff-lint-format-buffer t)))
 
 ;;;###autoload
-(defun lazy-ruff-mode-global-toggle (&optional enable)
-  "Toggle or explicitly set `lazy-ruff-mode` globally for Python buffers.
-With no argument, toggles the mode.  With a non-nil argument ENABLE, turns the
-mode on, and with nil, turns it off."
-  (interactive "P")
-  (let ((target-state (if (called-interactively-p 'any)
-                          (not (memq 'lazy-ruff-mode python-mode-hook))
-                        enable)))
-    ;; Ensure hooks and mode are aligned with target state
-    (if target-state
-        (add-hook 'python-mode-hook #'lazy-ruff-mode)
-      (remove-hook 'python-mode-hook #'lazy-ruff-mode))
-    ;; Apply the mode state to all current Python buffers
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (when (eq major-mode 'python-mode)
-          (lazy-ruff-mode (if target-state 1 -1)))))))
+(define-globalized-minor-mode lazy-ruff-global-mode lazy-ruff-mode
+  (lambda () (when (derived-mode-p 'python-mode 'python-base-mode)
+               (lazy-ruff-mode 1))))
+
+;;;###autoload
+(define-obsolete-function-alias 'lazy-ruff-mode-global-toggle 'lazy-ruff-global-mode "0.2.2")
+
 
 (provide 'lazy-ruff)
 ;;; lazy-ruff.el ends here
