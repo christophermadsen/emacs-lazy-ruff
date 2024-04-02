@@ -58,7 +58,7 @@ Add the following to your init.el (or other personalization file):
   :ensure t
   :bind (("C-c f" . lazy-ruff-lint-format-dwim)) ;; keybinding
   :config
-  (lazy-ruff-mode-global-toggle t)) ;; Enable the lazy-ruff minor mode globally
+  (lazy-ruff-global-mode t)) ;; Enable the lazy-ruff minor mode globally
 ```
 
 If you don't want to use the `ruff` linter and only use the `ruff`
@@ -86,7 +86,7 @@ call:
   :ensure t
   :bind (("C-c f" . lazy-ruff-lint-format-dwim)) ;; keybinding
   :config
-  (lazy-ruff-mode-global-toggle t)) ;; Enable the lazy-ruff minor mode globally
+  (lazy-ruff-global-mode t)) ;; Enable the lazy-ruff minor mode globally
 ```
 
 ### Manual Install
@@ -133,11 +133,11 @@ formatter/linter *on save* for Python buffers/files. To use this minor mode
 globally, add the following line to your Emacs config:
 
 ``` emacs-lisp
-(lazy-ruff-mode-global-toggle t)
+(lazy-ruff-global-mode t)
 ```
 
 You can also toggle it on/off in a buffer by calling `M-x lazy-ruff-mode` or do
-it globally by calling `M-x lazy-ruff-mode-global-toggle`
+it globally by calling `M-x lazy-ruff-global-mode`
 
 ### Formatter and Linter Settings
 Defaults have been provided in the package for the `ruff` shell command, but
