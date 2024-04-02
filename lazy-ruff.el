@@ -47,8 +47,7 @@
 
 (require 'org-element)
 (require 'org)
-
-(defvar python-mode-hook) ;; Quiet the byte-compiler warning
+(require 'python)
 
 (defvar lazy-ruff-check-command "ruff check --fix -s"
   "Defines the ruff check call for all methods.")
