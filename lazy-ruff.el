@@ -149,16 +149,17 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
 (defun lazy-ruff-lint-format-dwim ()
   "Dispatch to the correct ruff format function based on the context."
   (interactive)
-  ;; First, check if a region is selected
-  (if (use-region-p)
-      (lazy-ruff-lint-format-region)
-    ;; Next, check if inside an org-babel code block
-    (if (org-in-src-block-p)
-        (lazy-ruff-lint-format-block)
-      ;; Lastly, check if the current buffer is a Python mode buffer
-      (if (eq major-mode 'python-mode)
-          (lazy-ruff-lint-format-buffer)
-        (message "Not in a Python buffer or org-babel block, and no region is selected.")))))
+  (cond
+   ;; First, check if a region is selected
+   ((use-region-p)
+    (lazy-ruff-lint-format-region))
+   ;; Next, check if inside an org-babel code block
+   ((org-in-src-block-p)
+    (lazy-ruff-lint-format-block))
+   ;; Lastly, check if the current buffer is a Python mode buffer
+   ((derived-mode-p 'python-mode 'python-base-mode)
+    (lazy-ruff-lint-format-buffer)
+    (message "Not in a Python buffer or org-babel block, and no region is selected."))))
 
 ;;;###autoload
 (define-minor-mode lazy-ruff-mode
