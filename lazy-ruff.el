@@ -106,18 +106,19 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
 (defun lazy-ruff-lint-format-buffer ()
   "Format the current Python buffer using `ruff` before saving."
   (interactive)
-  (when (eq major-mode 'python-mode)
-    (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
-      ;; Write buffer to temporary file, format it, and replace buffer contents.
-      (write-region nil nil temp-file)
-      (if lazy-ruff-only-format-buffer
-          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
-        (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-        (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
-      (erase-buffer)
-      (insert-file-contents temp-file)
-      ;; Clean up temporary file.
-      (delete-file temp-file))))
+  (unless (derived-mode-p 'python-mode 'python-base-mode)
+    (user-error "Only python buffers can be linted with ruff"))
+  (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
+    ;; Write buffer to temporary file, format it, and replace buffer contents.
+    (write-region nil nil temp-file)
+    (if lazy-ruff-only-format-buffer
+        (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
+      (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
+      (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
+    (erase-buffer)
+    (insert-file-contents temp-file)
+    ;; Clean up temporary file.
+    (delete-file temp-file)))
 
 ;;;###autoload
 (defun lazy-ruff-lint-format-region ()
