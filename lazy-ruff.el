@@ -47,8 +47,7 @@
 
 (require 'org-element)
 (require 'org)
-
-(defvar python-mode-hook) ;; Quiet the byte-compiler warning
+(require 'python)
 
 (defvar lazy-ruff-check-command "ruff check --fix -s"
   "Defines the ruff check call for all methods.")
@@ -107,18 +106,19 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
 (defun lazy-ruff-lint-format-buffer ()
   "Format the current Python buffer using `ruff` before saving."
   (interactive)
-  (when (eq major-mode 'python-mode)
-    (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
-      ;; Write buffer to temporary file, format it, and replace buffer contents.
-      (write-region nil nil temp-file)
-      (if lazy-ruff-only-format-buffer
-          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
-        (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-        (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
-      (erase-buffer)
-      (insert-file-contents temp-file)
-      ;; Clean up temporary file.
-      (delete-file temp-file))))
+  (unless (derived-mode-p 'python-mode 'python-base-mode)
+    (user-error "Only python buffers can be linted with ruff"))
+  (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
+    ;; Write buffer to temporary file, format it, and replace buffer contents.
+    (write-region nil nil temp-file)
+    (if lazy-ruff-only-format-buffer
+        (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
+      (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
+      (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
+    (erase-buffer)
+    (insert-file-contents temp-file)
+    ;; Clean up temporary file.
+    (delete-file temp-file)))
 
 ;;;###autoload
 (defun lazy-ruff-lint-format-region ()
@@ -150,16 +150,17 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
 (defun lazy-ruff-lint-format-dwim ()
   "Dispatch to the correct ruff format function based on the context."
   (interactive)
-  ;; First, check if a region is selected
-  (if (use-region-p)
-      (lazy-ruff-lint-format-region)
-    ;; Next, check if inside an org-babel code block
-    (if (org-in-src-block-p)
-        (lazy-ruff-lint-format-block)
-      ;; Lastly, check if the current buffer is a Python mode buffer
-      (if (eq major-mode 'python-mode)
-          (lazy-ruff-lint-format-buffer)
-        (message "Not in a Python buffer or org-babel block, and no region is selected.")))))
+  (cond
+   ;; First, check if a region is selected
+   ((use-region-p)
+    (lazy-ruff-lint-format-region))
+   ;; Next, check if inside an org-babel code block
+   ((org-in-src-block-p)
+    (lazy-ruff-lint-format-block))
+   ;; Lastly, check if the current buffer is a Python mode buffer
+   ((derived-mode-p 'python-mode 'python-base-mode)
+    (lazy-ruff-lint-format-buffer)
+    (message "Not in a Python buffer or org-babel block, and no region is selected."))))
 
 ;;;###autoload
 (define-minor-mode lazy-ruff-mode
@@ -171,23 +172,13 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (remove-hook 'before-save-hook #'lazy-ruff-lint-format-buffer t)))
 
 ;;;###autoload
-(defun lazy-ruff-mode-global-toggle (&optional enable)
-  "Toggle or explicitly set `lazy-ruff-mode` globally for Python buffers.
-With no argument, toggles the mode.  With a non-nil argument ENABLE, turns the
-mode on, and with nil, turns it off."
-  (interactive "P")
-  (let ((target-state (if (called-interactively-p 'any)
-                          (not (memq 'lazy-ruff-mode python-mode-hook))
-                        enable)))
-    ;; Ensure hooks and mode are aligned with target state
-    (if target-state
-        (add-hook 'python-mode-hook #'lazy-ruff-mode)
-      (remove-hook 'python-mode-hook #'lazy-ruff-mode))
-    ;; Apply the mode state to all current Python buffers
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (when (eq major-mode 'python-mode)
-          (lazy-ruff-mode (if target-state 1 -1)))))))
+(define-globalized-minor-mode lazy-ruff-global-mode lazy-ruff-mode
+  (lambda () (when (derived-mode-p 'python-mode 'python-base-mode)
+               (lazy-ruff-mode 1))))
+
+;;;###autoload
+(define-obsolete-function-alias 'lazy-ruff-mode-global-toggle 'lazy-ruff-global-mode "0.2.2")
+
 
 (provide 'lazy-ruff)
 ;;; lazy-ruff.el ends here
