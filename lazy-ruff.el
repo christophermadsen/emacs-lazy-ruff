@@ -28,7 +28,7 @@
 ;; This package provides Emacs commands to format and lint Python code using
 ;; the external 'ruff' tool.  It offers functions to format the entire buffer,
 ;; specific regions, or Org mode source blocks.
-;; 
+;;
 ;; Prerequisites:
 ;; - The 'ruff' command-line tool must be installed and available in your
 ;;   system's PATH. Please refer to the 'ruff' documentation at:
@@ -110,7 +110,10 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
   (interactive)
   (unless (derived-mode-p 'python-mode 'python-base-mode)
     (user-error "Only python buffers can be linted with ruff"))
-  (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
+  (let ((temp-file (make-temp-file "ruff-tmp" nil ".py"))
+        (old-point (point))
+        (active-window (frame-selected-window))
+        (old-window-start (window-start))) ;;; Save point
     ;; Write buffer to temporary file, format it, and replace buffer contents.
     (write-region nil nil temp-file)
     (if lazy-ruff-only-format-buffer
@@ -120,7 +123,10 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
     (erase-buffer)
     (insert-file-contents temp-file)
     ;; Clean up temporary file.
-    (delete-file temp-file)))
+    (delete-file temp-file)
+    ;; Restore point and window
+    (goto-char old-point)
+    (set-window-start active-window old-window-start)))
 
 ;;;###autoload
 (defun lazy-ruff-lint-format-region ()
@@ -142,7 +148,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
           (insert-file-contents temp-file))
         (delete-region start end)
         (insert-buffer-substring temp-buffer)
-        
+
         ;; Cleanup actions.
         (delete-file temp-file)
         (kill-buffer temp-buffer))
