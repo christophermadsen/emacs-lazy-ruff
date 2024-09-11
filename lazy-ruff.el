@@ -60,11 +60,38 @@
 (defvar lazy-ruff-only-format-block nil
   "When non-nil (e.g. t), only format the code in a block without linting fixes.")
 
+(defvar lazy-ruff-only-check-block nil
+  "When non-nil (e.g. t), only lint the code in a block without formatting fixes.")
+
 (defvar lazy-ruff-only-format-buffer nil
   "When non-nil (e.g. t), only format the code in a buffer without linting fixes.")
 
+(defvar lazy-ruff-only-check-buffer nil
+  "When non-nil (e.g. t), only lint the code in a buffer without formatting fixes.")
+
 (defvar lazy-ruff-only-format-region nil
   "When non-nil (e.g. t), only format the code in a region without linting fixes.")
+
+(defvar lazy-ruff-only-check-region nil
+  "When non-nil (e.g. t), only lint the code in a region without formatting fixes.")
+
+
+(defun lazy-ruff-run-commands (temp-file only-format only-check)
+  "Run the appropriate ruff commands on TEMP-FILE.
+If ONLY-FORMAT is true, only format the file.
+If ONLY-CHECK is true, only check the file.
+Otherwise, run both check and format commands."
+  (cond
+   (only-format
+    (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
+
+   (only-check
+    (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file)))
+
+   (t
+    (progn
+      (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
+      (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))))))
 
 ;;;###autoload
 (defun lazy-ruff-lint-format-block ()
@@ -89,10 +116,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
       (if (not (string= lang "python"))
           (message "The source block is not Python")
         (with-temp-file temp-file (insert code))
-        (if lazy-ruff-only-format-block
-            (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
-          (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
+	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-block t) (eq lazy-ruff-only-check-block t))
         (setq formatted-code (with-temp-buffer
                                (insert-file-contents temp-file)
                                (buffer-string)))
@@ -113,10 +137,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
   (let ((temp-file (make-temp-file "ruff-tmp" nil ".py")))
     ;; Write buffer to temporary file, format it, and replace buffer contents.
     (write-region nil nil temp-file)
-    (if lazy-ruff-only-format-buffer
-        (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
-      (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-      (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
+	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-buffer t) (eq lazy-ruff-only-check-buffer t))
     (erase-buffer)
     (insert-file-contents temp-file)
     ;; Clean up temporary file.
@@ -133,10 +154,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
              (temp-buffer (generate-new-buffer " *temp-ruff-output*")))
         ;; Write selected region to temporary file, format it.
         (write-region start end temp-file nil 'silent)
-        (if lazy-ruff-only-format-region
-            (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file))
-          (shell-command-to-string (format "%s %s" lazy-ruff-check-command temp-file))
-          (shell-command-to-string (format "%s %s" lazy-ruff-format-command temp-file)))
+	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-region t) (eq lazy-ruff-only-check-region t))
         ;; Replace region with formatted content.
         (with-current-buffer temp-buffer
           (insert-file-contents temp-file))
