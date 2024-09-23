@@ -32,11 +32,6 @@ purely subjective experience, since I have not run any benchmarks what-so-ever.
 
 I hope this package will help your workflow.
 
-### A Notice to Potential Users
-I barely know any (emacs-)lisp, so if you enjoy the package, then any
-constructive criticism or contribution to further development would be very
-much appreciated :-)
-
 ## Prerequisites
 The `ruff` command-line tool must be installed and be available in your
 system's PATH, for more information see:
