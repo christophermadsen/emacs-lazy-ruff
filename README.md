@@ -2,7 +2,7 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [emacs-lazy-ruff](#emacs-lazy-ruff)
+- [lazy-ruff](#lazy-ruff)
     - [Prerequisites](#prerequisites)
     - [TL;DR Lazy Kickstart](#tldr-lazy-kickstart)
     - [Installation](#installation)
@@ -18,7 +18,7 @@
 
 <!-- markdown-toc end -->
 
-# emacs-lazy-ruff
+# lazy-ruff
 
 `Lazy-ruff` is an Emacs integration of the blazingly fast [ruff
 formatter/linter](https://docs.astral.sh/ruff) simply using shell
