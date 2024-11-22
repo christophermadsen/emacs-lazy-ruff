@@ -116,7 +116,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
       (if (not (string= lang "python"))
           (message "The source block is not Python")
         (with-temp-file temp-file (insert code))
-	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-block t) (eq lazy-ruff-only-check-block t))
+        (lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-block t) (eq lazy-ruff-only-check-block t))
         (setq formatted-code (with-temp-buffer
                                (insert-file-contents temp-file)
                                (buffer-string)))
@@ -140,7 +140,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
         (old-window-start (window-start))) ;;; Save point
     ;; Write buffer to temporary file, format it, and replace buffer contents.
     (write-region nil nil temp-file)
-	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-buffer t) (eq lazy-ruff-only-check-buffer t))
+        (lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-buffer t) (eq lazy-ruff-only-check-buffer t))
     (erase-buffer)
     (insert-file-contents temp-file)
     ;; Clean up temporary file.
@@ -160,7 +160,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
              (temp-buffer (generate-new-buffer " *temp-ruff-output*")))
         ;; Write selected region to temporary file, format it.
         (write-region start end temp-file nil 'silent)
-	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-region t) (eq lazy-ruff-only-check-region t))
+        (lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-region t) (eq lazy-ruff-only-check-region t))
         ;; Replace region with formatted content.
         (with-current-buffer temp-buffer
           (insert-file-contents temp-file))
