@@ -181,7 +181,8 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
    ((use-region-p)
     (lazy-ruff-lint-format-region))
    ;; Next, check if inside an org-babel code block
-   ((org-in-src-block-p)
+   ((and (eq major-mode 'org-mode)
+         (org-in-src-block-p))
     (lazy-ruff-lint-format-block))
    ;; Lastly, check if the current buffer is a Python mode buffer
    ((derived-mode-p 'python-mode 'python-base-mode)
