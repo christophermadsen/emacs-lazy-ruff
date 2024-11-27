@@ -75,6 +75,8 @@
 (defvar lazy-ruff-only-check-region nil
   "When non-nil (e.g. t), only lint the code in a region without formatting fixes.")
 
+(defvar lazy-ruff-org-src-languages '("python")
+  "Defines which languages in code blocks are eligible for formatting and linting")
 
 (defun lazy-ruff-run-commands (temp-file only-format only-check)
   "Run the appropriate ruff commands on TEMP-FILE.
@@ -113,7 +115,7 @@ Ensures cursor position is maintained.  Requires `ruff` in system's PATH."
                           (goto-char (org-element-property :end element))
                           (search-backward "#+END_SRC")
                           (line-beginning-position))))
-      (if (not (string= lang "python"))
+      (if (not (member lang lazy-ruff-org-src-languages))
           (message "The source block is not Python")
         (with-temp-file temp-file (insert code))
 	(lazy-ruff-run-commands temp-file (eq lazy-ruff-only-format-block t) (eq lazy-ruff-only-check-block t))
