@@ -210,3 +210,16 @@ We can also add these changes immediately when calling `use-package` with the
   (setq lazy-ruff-only-format-region t) ;; Don't lint in marked regions
   (setq lazy-ruff-only-format-buffer t)) ;; Don't lint in Python major mode buffers
 ```
+
+### Multiple Python 'languages' in Org Source Blocks
+
+By default lazy-ruff only checks for the "python" language in org src blocks, but you may want to include other python types, e.g. jupyter-python, to be considered for formatting/linting. You can do this by adding the desired language to the `lazy-ruff-org-src-languages` list of languages. Here are some examples with "jupyter-python":
+``` emacs-lisp
+(add-to-list 'lazy-ruff-org-src-languages "jupyter-python")
+```
+Or you may want to add it directly during the use-package call.
+``` emacs-lisp
+(use-package lazy-ruff
+  :config
+  (add-to-list 'lazy-ruff-org-src-languages "jupyter-python"))
+```
