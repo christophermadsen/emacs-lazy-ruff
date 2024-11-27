@@ -23,15 +23,14 @@
 
 `Lazy-ruff` is an Emacs integration of the blazingly fast [ruff
 formatter/linter](https://docs.astral.sh/ruff) simply using shell
-commands. `lazy-ruff` offers an (hopefully) easy approach to formatting and
-linting your Python code with `ruff`, whether it's within `org-babel` code
-blocks, specific marked regions or on entire Python major mode buffers.
+commands. Whether it is marked code regions, org src blocks or entire python
+buffers, `lazy-ruff` (hopefully) offers a simple approach to formatting and
+linting your Python code with ruff within Emacs. From my experience `lazy-ruff`
+operates MUCH faster than any other formatters/linters currently available (all
+credits to `ruff` of course), I am sure you'll agree if you try it out for
+yourself.
 
-From my experience `lazy-ruff` operates MUCH faster than any other formatter or
-linter that I've used so far (all credits to `ruff` of course), but that is a
-purely subjective experience, since I have not run any benchmarks what-so-ever.
-
-I hope this package will help your workflow.
+**I hope this package helps speed up your workflow :>**
 
 ## Prerequisites
 The `ruff` command-line tool must be installed and be available in your
@@ -115,7 +114,6 @@ Or during the `use-package` call:
   :ensure t
   :bind (("C-c f" . lazy-ruff-lint-format-dwim)))
 ```
-
 
 You can also set up keybindings for each individual method depending on your
 use-case, but if you use the `lazy-ruff-lint-format-dwim` method then
@@ -214,7 +212,11 @@ We can also add these changes immediately when calling `use-package` with the
 
 ### Multiple Python 'languages' in Org Source Blocks
 
-By default lazy-ruff only checks for the "python" language in org src blocks, but you may want to include other python types, e.g. jupyter-python, to be considered for formatting/linting. You can do this by adding the desired language to the `lazy-ruff-org-src-languages` list of languages. Here are some examples with "jupyter-python":
+By default lazy-ruff only checks for the "python" language in org src blocks,
+but you may want to include other python types, e.g. jupyter-python, to be
+considered for formatting/linting. You can do this by adding the desired
+language to the `lazy-ruff-org-src-languages` list of languages. Here are some
+examples with "jupyter-python":
 ``` emacs-lisp
 (add-to-list 'lazy-ruff-org-src-languages "jupyter-python")
 ```
