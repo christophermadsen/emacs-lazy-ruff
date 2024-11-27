@@ -1,3 +1,4 @@
+[![MELPA](https://melpa.org/packages/lazy-ruff-badge.svg)](https://melpa.org/#/lazy-ruff)
 <!-- TOC was generated using markdown-toc package for Emacs -->
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
