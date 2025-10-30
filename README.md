@@ -1,4 +1,5 @@
-[![MELPA](https://melpa.org/packages/lazy-ruff-badge.svg)](https://melpa.org/#/lazy-ruff)
+[![MELPA](https://melpa.org/packages/lazy-ruff-badge.svg)](https://melpa.org/#/lazy-ruff) 
+
 <!-- TOC was generated using markdown-toc package for Emacs -->
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -31,6 +32,11 @@ credits to `ruff` of course), I am sure you'll agree if you try it out for
 yourself.
 
 **I hope this package helps speed up your workflow :>**
+
+If you like my work, please help me stay motivated by supporting me <3
+
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=48LL4MH9YQ3PE)
+[![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/christophermadsen)
 
 ## Prerequisites
 The `ruff` command-line tool must be installed and be available in your
